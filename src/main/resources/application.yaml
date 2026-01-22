@@ -1,0 +1,11 @@
+server:
+  port: 8080
+  servlet:
+    application-display-name: bank-backend
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bank
+    username: admin
+    password: admin1111
+    driver-class-name: org.postgresql.Driver
