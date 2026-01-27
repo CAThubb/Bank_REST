@@ -1,5 +1,5 @@
 
 spring:
   datasource:
-    url: jdbc:tc:postgresql:17:///bank
+    url: jdbc:tc:postgresql:17:///banktest
 
