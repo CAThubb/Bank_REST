@@ -4,6 +4,8 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -11,20 +13,36 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
+    private final String jwtSecret;
+    private final long accessTokenExpiration;
+    private final long refreshTokenExpiration;
 
-    private static final String jwtSecret = "rqqRu8tVBiu10PnfwECoBlvqMMqBJU4R5rVANbPsBaF";
-    private static final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 10;
-    private static final long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7;
+    public JwtService(
+            @Value("${jwt.secret}") String jwtSecret,
+            @Value("${jwt.accessTokenExp}") long accessTokenExpiration,
+            @Value("${jwt.refreshTokenExp}") long refreshTokenExpiration) {
+        this.jwtSecret = jwtSecret;
+        this.accessTokenExpiration = accessTokenExpiration;
+        this.refreshTokenExpiration = refreshTokenExpiration;
+    }
+
 
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public List<String> extractRoles(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("roles", List.class);
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -41,11 +59,23 @@ public class JwtService {
     }
 
     public String generateAccessToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails, ACCESS_TOKEN_EXPIRATION);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
+        claims.put("email", userDetails.getUsername());
+
+        return generateToken(claims, userDetails, accessTokenExpiration);
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails, REFRESH_TOKEN_EXPIRATION);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
+        claims.put("email", userDetails.getUsername());
+
+        return generateToken(claims, userDetails, refreshTokenExpiration);
     }
 
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
@@ -77,9 +107,9 @@ public class JwtService {
         return false;
     }
 
-    private boolean isTokenValid(String token, UserDetails userDetails) {
+    public boolean isTokenEmailValid(String token, UserDetails userDetails) {
         final String email = extractEmail(token);
-        return (email.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        return (email.equals(userDetails.getUsername()));
     }
 
     private boolean isTokenExpired(String token) {
