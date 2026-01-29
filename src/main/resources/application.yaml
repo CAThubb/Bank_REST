@@ -6,8 +6,8 @@ server:
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/bank
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
+    username: admin
+    password: admin1111
     driver-class-name: org.postgresql.Driver
   liquibase:
     enabled: true
@@ -20,3 +20,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+jwt:
+  secret: "rqqRu8tVBiu10PnfwECoBlvqMMqBJU4R5rVANbPsBaF"
+  accessTokenExp: 600000
+  refreshTokenExp: 604800000
