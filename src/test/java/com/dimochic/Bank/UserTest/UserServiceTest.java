@@ -46,7 +46,7 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @Test
-    void createUserSuccess() {
+    void createUser_givenUserCreateRequestDto_shouldReturnUserResponseDto() {
         UserCreateRequestDto userCreateRequestDto = new UserCreateRequestDto(
                 "newuser@mail.com",
                 "kinki",
@@ -62,7 +62,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void createUserWithMailExistsThrowsBadRequestException() {
+    void createUser_givenExistingMail_shouldThrowBadRequestException() {
         UserCreateRequestDto existingUser = new UserCreateRequestDto(
                 "existing@mail.com",
                 "ImHere",
@@ -83,7 +83,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void createUserWithUsernameExistsThrowsBadRequestException() {
+    void createUser_givenExistingUsername_shouldThrowBadRequestException() {
         UserCreateRequestDto existingUser = new UserCreateRequestDto(
                 "existing@mail.com",
                 "ImHere",
