@@ -6,6 +6,7 @@ import com.dimochic.Bank.user.model.dto.jwt.JwtAuthenticationDto;
 import com.dimochic.Bank.user.model.dto.jwt.UserCredentialsDto;
 import com.dimochic.Bank.user.security.JwtService;
 import com.dimochic.Bank.user.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/0.0.1v/auth")
+@Tag(name = "Authentication", description = "Endpoints for user authentication")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
