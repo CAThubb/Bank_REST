@@ -51,8 +51,8 @@ public class UserPrincipal implements UserDetails {
         );
     }
 
-    public String getEmail() {
-        return email;
+    public String displayName() {
+        return username;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     @Override
