@@ -3,6 +3,7 @@ package com.dimochic.Bank.user.controller;
 import com.dimochic.Bank.user.model.dto.UserCreateRequestDto;
 import com.dimochic.Bank.user.model.dto.UserResponseDto;
 import com.dimochic.Bank.user.model.dto.jwt.JwtAuthenticationDto;
+import com.dimochic.Bank.user.model.dto.jwt.RefreshTokenDto;
 import com.dimochic.Bank.user.model.dto.jwt.UserCredentialsDto;
 import com.dimochic.Bank.user.security.JwtService;
 import com.dimochic.Bank.user.service.UserService;
@@ -54,6 +55,16 @@ public class AuthController {
             return ResponseEntity.ok(new JwtAuthenticationDto(accessToken, refreshToken));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+        }
+    }
+
+    @PostMapping(path = "/refresh")
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenDto refreshTokenDto) {
+        try {
+            JwtAuthenticationDto jwtAuthToken = userService.refreshToken(refreshTokenDto);
+            return ResponseEntity.status(HttpStatus.OK).body(jwtAuthToken);
+        } catch (AuthenticationException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token validation failed");
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.dimochic.Bank.user.security;
 
+import com.dimochic.Bank.user.model.dto.jwt.JwtAuthenticationDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -20,6 +21,7 @@ public class JwtService {
     private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
     private static final String CLAIMS_ROLES = "roles";
+    private static final String CLAIMS_TOKEN_TYPE = "type";
 
     private final String jwtSecret;
     private final long accessTokenExpiration;
@@ -37,6 +39,11 @@ public class JwtService {
 
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractTokenType(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get(CLAIMS_TOKEN_TYPE, String.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -67,6 +74,7 @@ public class JwtService {
     public String generateAccessToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIMS_ROLES, extractAuthorities(userDetails));
+        claims.put(CLAIMS_TOKEN_TYPE, "access");
 
         return generateToken(claims, userDetails, accessTokenExpiration);
     }
@@ -74,6 +82,7 @@ public class JwtService {
     public String generateRefreshToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIMS_ROLES, extractAuthorities(userDetails));
+        claims.put(CLAIMS_TOKEN_TYPE, "refresh");
 
         return generateToken(claims, userDetails, refreshTokenExpiration);
     }
