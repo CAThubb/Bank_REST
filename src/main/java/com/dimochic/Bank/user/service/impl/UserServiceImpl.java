@@ -1,10 +1,12 @@
 package com.dimochic.Bank.user.service.impl;
 
 import com.dimochic.Bank.exception.BadRequestException;
+import com.dimochic.Bank.exception.UserNotFoundException;
 import com.dimochic.Bank.user.model.dto.UserCreateRequestDto;
 import com.dimochic.Bank.user.model.dto.UserResponseDto;
 import com.dimochic.Bank.user.model.dto.jwt.JwtAuthenticationDto;
 import com.dimochic.Bank.user.model.dto.jwt.RefreshTokenDto;
+import com.dimochic.Bank.user.model.entity.Status;
 import com.dimochic.Bank.user.model.entity.User;
 import com.dimochic.Bank.user.model.mapper.UserMapper;
 import com.dimochic.Bank.user.repository.UserRepository;
@@ -17,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -79,4 +82,14 @@ public class UserServiceImpl implements UserService {
 
         return new JwtAuthenticationDto(newAccessToken, newRefreshToken);
     }
+
+    @Override
+    public UserResponseDto updateUserStatus(UUID userId, Status status) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User with id=" + userId + "not found"));
+        user.setStatus(status);
+        user = userRepository.save(user);
+        return userMapper.userToResponseDto(user);
+    }
+
 }

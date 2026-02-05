@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -19,7 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/0.0.1v/auth")
+@RequestMapping("/api/0.2v/auth")
 @Tag(name = "Authentication", description = "Endpoints for user authentication")
 public class AuthController {
 
@@ -53,7 +54,7 @@ public class AuthController {
             String refreshToken = jwtService.generateRefreshToken(userDetails);
 
             return ResponseEntity.ok(new JwtAuthenticationDto(accessToken, refreshToken));
-        } catch (AuthenticationException e) {
+        } catch (AuthenticationException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
         }
     }

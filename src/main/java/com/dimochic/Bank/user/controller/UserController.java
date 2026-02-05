@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/0.0.1v/users")
+@RequestMapping("/api/0.2v/users")
 @SecurityRequirement(name = "Authentication")
 @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
 @Tag(name = "User: User operations", description = "Endpoints for users to manage their profile")
@@ -32,7 +32,6 @@ public class UserController {
         this.userMapper = userMapper;
     }
 
-    // дописать тесты на логин юзера
     @GetMapping(path = "/me")
     public ResponseEntity<UserResponseDto> getUserCredential() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
