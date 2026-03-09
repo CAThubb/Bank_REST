@@ -1,6 +1,5 @@
 package com.dimochic.Bank.user.security;
 
-import com.dimochic.Bank.user.model.dto.jwt.JwtAuthenticationDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;

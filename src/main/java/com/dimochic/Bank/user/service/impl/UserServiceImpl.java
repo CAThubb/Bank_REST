@@ -13,12 +13,13 @@ import com.dimochic.Bank.user.repository.UserRepository;
 import com.dimochic.Bank.user.security.JwtService;
 import com.dimochic.Bank.user.service.UserService;
 import io.jsonwebtoken.MalformedJwtException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -90,6 +91,11 @@ public class UserServiceImpl implements UserService {
         user.setStatus(status);
         user = userRepository.save(user);
         return userMapper.userToResponseDto(user);
+    }
+
+    @Override
+    public Page<UserResponseDto> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable).map(userMapper::userToResponseDto);
     }
 
 }

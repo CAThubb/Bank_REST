@@ -1,6 +1,7 @@
 package com.dimochic.Bank.user.controller;
 
 import com.dimochic.Bank.exception.UserNotFoundException;
+import com.dimochic.Bank.user.model.dto.PageResponse;
 import com.dimochic.Bank.user.model.dto.UserResponseDto;
 import com.dimochic.Bank.user.model.entity.Status;
 import com.dimochic.Bank.user.model.entity.User;
@@ -9,6 +10,9 @@ import com.dimochic.Bank.user.repository.UserRepository;
 import com.dimochic.Bank.user.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +35,13 @@ public class AdminController {
         this.userService = userService;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+    }
+
+    @GetMapping(path = "/users")
+    public ResponseEntity<PageResponse<UserResponseDto>> getAllUsers(
+            @PageableDefault(size = 8) Pageable pageable) {
+        Page<UserResponseDto> userPage = userService.getAllUsers(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(new PageResponse<>(userPage));
     }
 
     @GetMapping(path = "/users/{id}")
