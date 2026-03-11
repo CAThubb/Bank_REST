@@ -1,11 +1,14 @@
 package com.dimochic.Bank.user.model.entity;
 
+import com.dimochic.Bank.card.model.entity.Card;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -25,9 +28,12 @@ public class User {
     @Size(min = 3, max = 255)
     private String username;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     @Size(min = 6, max = 100)
     private String password;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Card> cards = new ArrayList<>();
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -78,11 +84,12 @@ public class User {
         }
     }
 
-    public User() {
+    protected User() {
     }
 
     public User(UUID id,
                 String email, String username, String password,
+                List<Card> cards,
                 Role role, Status status,
                 LocalDateTime createdAt, LocalDateTime updatedAt
     ) {
@@ -90,6 +97,7 @@ public class User {
         this.email = email;
         this.username = username;
         this.password = password;
+        this.cards = cards;
         this.role = role;
         this.status = status;
         this.createdAt = createdAt;
@@ -136,6 +144,10 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
+    public void addCards(Card card) {
+        cards.add(card);
+    }
+
     public UUID getId() {
         return id;
     }
@@ -166,6 +178,10 @@ public class User {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public List<Card> getCards() {
+        return cards;
     }
 
     @Override
